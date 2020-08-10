@@ -1,49 +1,6 @@
 import { useState, useReducer } from 'react';
-const initialTodo = [{
-  item: 'Your todo Item',
-  completed: false,
-  id: Date.now(),
-}]
-const todoReducer = (state, action) => {
-  switch (action.type) {
-    case 'ADD':
-      let newList = state.slice()
-      newList.push({
-        item: action.payload.item,
-        completed: false,
-        id: Date.now(),
-      })
-      return newList
-    case 'EDIT':
-      const newEdit = state.slice()
-      newEdit.forEach(aTodo => {
-        if (aTodo.item === action.payload.item) {
-          aTodo.item = action.payload.edit
-        }
-      })
-      return newEdit
-    case 'COMPLETED':
-    console.log(`running todoReducer case COMPLETED`)
-    //flip the completed boolean
-      let newCompleted = state.slice()
-      debugger
-      newCompleted.forEach((aTodo) => {
-        const isIdMatching = aTodo.id === parseInt(action.payload.id)
-        if (isIdMatching) {
-          debugger
-          aTodo.completed = !aTodo.completed
-        }
-      })
 
-      return newCompleted //it's flipping correctly but the state is not updating on the app
-    case 'CLEAR':
-      const clearCompletedTodos = state = action.payload.newTodo
-      return clearCompletedTodos
-    default:
-      return state
-  }
-}
-export default function useForm() {
+export default function useForm(initialTodo, todoReducer) {
   //state
   const [useInput, setUserInput] = useState('')
   const [todoList, setTodoList] = useReducer(todoReducer, initialTodo)
