@@ -1,8 +1,7 @@
 
 
-import React from 'react';
+import React, { useState, useReducer } from 'react';
 import './App.css';
-import useForm from './hooks/useForm'
 import moment from 'moment';
 
 const initialTodo = [{
@@ -29,8 +28,8 @@ const todoReducer = (state, action) => {
       })
       return newEdit
     case 'COMPLETED':
-    console.log(`running todoReducer case COMPLETED`)
-    //flip the completed boolean
+      console.log(`running todoReducer case COMPLETED`)
+      //flip the completed boolean
       let newCompleted = state.slice()
       debugger
       newCompleted.forEach((aTodo) => {
@@ -52,7 +51,9 @@ const todoReducer = (state, action) => {
 
 
 function App() {
-  const [useInput, todoList, onChange, onSubmit, toggleCompleted, clearTodos] = useForm(initialTodo, todoReducer)
+  //states
+  const [useInput, setUserInput] = useState('')
+  const [todoList, setTodoList] = useReducer(todoReducer, initialTodo)
 
   function displayTodos() {
     //prefer this way to you can debugge it
@@ -60,7 +61,7 @@ function App() {
     const item = todoList.map(aTodo => {
       return (
         <li id={aTodo.id} onClick={toggleCompleted} key={aTodo.id}>
-          <span className={aTodo.completed ? 'completed' : ''} id={aTodo.id}>   
+          <span className={aTodo.completed ? 'completed' : ''} id={aTodo.id}>
             {aTodo.item}
           </span>
           <span id={aTodo.id}>
@@ -71,14 +72,59 @@ function App() {
     })
     return item
   }
+  //handles Changes on input
+  function onChange(e) {
+    //get the user input on the text area into the userInput state
+    setUserInput(e.target.value)
+  }
+  //handle the submit button
+  function onSubmit(e) {
+    //stop page reload
+    e.preventDefault()
+    //get the userInput state text has the next todo into the todoList
+    setTodoList({ type: 'ADD', payload: { item: useInput } })
+    //clear input data
+    setUserInput('')
+  }
+  //toggle completed
+  const toggleCompleted = (e) => {
+    //prvent page reload, and event propagation
+    e.preventDefault()
+    // e.stopPropagation()
 
+    // console.log(`running toogleCompleted`)
+    // debugger
+    //call the reducer and flip the completed boolean value
+    setTodoList({ type: 'COMPLETED', payload: { id: e.target.id } })
+
+  }
+  //clear the todos
+  function clearTodos() {
+    //get a copy of how you want the list to look like
+    const newTodo = todoList.filter(aTodo => {
+      return aTodo.completed !== true
+    })
+    //override the todolist with this new array
+    setTodoList({ type: 'CLEAR', payload: { newTodo } })
+  }
   return (
     <div className="App">
       <section className="challange-todo-list">
         <div className="display-todos">
           <h2>Todo List:</h2>
           <ul>
-            {displayTodos()}
+            {todoList.map(aTodo => {
+      return (
+        <li id={aTodo.id} onClick={toggleCompleted} key={aTodo.id}>
+          <span className={aTodo.completed ? 'completed' : ''} id={aTodo.id}>
+            {aTodo.item}
+          </span>
+          <span id={aTodo.id}>
+            {aTodo.completed ? ` Completed: ${moment().format('MMMM Do YYYY, h:mm a')}` : ''}
+          </span>
+        </li>
+      )
+    })}
           </ul>
 
         </div>
