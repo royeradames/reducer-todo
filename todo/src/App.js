@@ -2,8 +2,7 @@
 
 import React, {useReducer} from 'react';
 import './App.css';
-import useForm, {initialTodo, todoReducer} from './hooks/useForm'
-import moment from 'moment';
+import useForm from './hooks/useForm'
 
 function App() {
   const [todoListFromApp, setTodoListFromApp] = useReducer(todoReducer, initialTodo)
@@ -21,26 +20,12 @@ function App() {
             {aTodo.item}
           </span>
           <span id={aTodo.id}>
-            {aTodo.completed ? ` Completed: ${moment().format('MMMM Do YYYY, h:mm a')}` : ''}
+            {aTodo.timeTag}
           </span>
         </li>
       )
     })
     return item
-    // const item = todoList.map(aTodo => {
-    //   return (
-    //     // with span
-    //     <li id={aTodo.id} key={aTodo.id}>
-    //       <span onClick={toggleCompleted} className={aTodo.completed ? 'completed' : ''} id={aTodo.id}>   
-    //         {aTodo.item}
-    //       </span>
-    //       <span id={aTodo.id}>
-    //         {aTodo.completed ? ` Completed: ${moment().format('MMMM Do YYYY, h:mm a')}` : ''}
-    //       </span>
-    //     </li>
-    //   )
-    // })
-    // return item
   }
 
   return (

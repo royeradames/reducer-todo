@@ -2,7 +2,8 @@ import { useState, useReducer } from 'react';
 import moment from 'moment';
 
 
-export const initialTodo = [{
+const initialTodo = [{
+
   item: 'Your todo Item',
   completed: false,
   id: Date.now(),
@@ -17,31 +18,23 @@ export const todoReducer = (state, action) => {
         item: action.payload.item,
         completed: false,
         id: Date.now(),
-        /*timeCompleted: this.completed ? moment().format('MMMM Do YYYY, h:mm:ss a') : null*/
+        timeTag: ''
+
       })
       return newList
-    case 'EDIT':
-      const newEdit = state.slice()
-      newEdit.forEach(aTodo => {
-        if (aTodo.item === action.payload.item) {
-          aTodo.item = action.payload.edit
-        }
-      })
-      return newEdit
     case 'COMPLETED':
-      console.log(`In case COMPLETED`)
-      //flip the completed boolean
-      let newCompleted = state.slice()
-      debugger
-      newCompleted.forEach((aTodo) => {
-        const isIdMatching = aTodo.id === parseInt(action.payload.id)
-        if (isIdMatching) {
-          debugger
-          aTodo.completed = !aTodo.completed
-        }
-      })
 
-      return newCompleted //Completed is running 2, but why?
+    return state.map(item => {
+      if (item.id == action.payload.id){
+        //spread operator stops it from running 2 on stright mode.
+        //flip the completed boolean key value pair
+        //if the value of the key completed is true then time tag the todo
+        return { ...item, completed: !item.completed, timeTag: !item.completed ? moment().format('MMMM Do YYYY, h:mm a') : ''}
+      } else {
+        return item
+      }
+    })
+
     case 'CLEAR':
       const clearCompletedTodos = state = action.payload.newTodo
       return clearCompletedTodos
